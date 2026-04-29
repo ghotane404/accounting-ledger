@@ -1,5 +1,5 @@
 package com.pluralsight;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
     static Scanner scanner = new Scanner(System.in);
@@ -8,13 +8,15 @@ public class Main {
     public static void main (String[] args){
         //The home screen should give the user the following options. The
         //application should continue to run until the user chooses to exit.
-        ledger = Ledger.createLoadedLedger();
+        ledger = Ledger.loadLedgerFromFile();
         homeScreen();
     }
 
     public static void homeScreen(){
+        int width = 40;
         while (true){
             System.out.println();
+            UserInterface.printCentered("Home Page", width);
             System.out.println("What would you like to do? ");
             System.out.println("D) Add Deposit - prompt user for the deposit information and save it to the csv file");
             System.out.println("P) Make Payment (Debit) - prompt user for the debit information and save it to the csv file");
@@ -25,11 +27,13 @@ public class Main {
 
             switch(userChoice){
                 case "D":
+                    Ledger.addDeposit();
                     break;
                 case "P":
+                    Ledger.addPayment();
                     break;
                 case "L":
-                    Ledger.ledgerScreen();
+                    ledger.ledgerScreen();
                     break;
                 case "X":
                     System.out.println();

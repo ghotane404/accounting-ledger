@@ -4,28 +4,29 @@ import java.util.*;
 
 public class Ledger {
     static Scanner scanner = new Scanner(System.in);
-    private static Ledger ledger = new Ledger();
+    static int width = 100;
+
     private static Reports reports = new Reports();
-    private static ArrayList<Transaction> transactions = new ArrayList<>();
-    private static Transaction transaction;
+    private static ArrayList<Transaction> transactions  = new ArrayList<>();
 
     //▪ L) Ledger - display the ledger screen
     public void ledgerScreen(){
         //    Ledger - All entries should show the newest entries first
         while (true){
             System.out.println();
+            UserInterface.printCentered("Ledger Page", 40);
             System.out.println("What would you like to do? ");
             System.out.println("A) All - Display all entries");
             System.out.println("D) Deposits - Display only the entries that are deposits into the account");
             System.out.println("P) Payments - Display only the negative entries (or payments)");
-            System.out.println("R) Reports - A new screen that allows the user to run pre-defined reports or to run a custom search \n");
+            System.out.println("R) Reports - A new screen that allows the user to run pre-defined reports or to run a custom search ");
             System.out.println("H) Home - go back to the home page");
 
             String userChoice = scanner.nextLine().toUpperCase().strip();
 
             switch (userChoice) {
                 case "A":
-                    ledger.displayAllTransactions();
+                    displayAllTransactions();
                     break;      // break - leaves the switch and continues the method
                 case "D":
                     displayDeposits();
@@ -46,14 +47,13 @@ public class Ledger {
         }
     }
 
-
     // loading the transaction.csv file
     private void loadTransaction(){
         try {
             FileReader fileReader = new FileReader("transactions.csv");
             BufferedReader bufferedReader = new BufferedReader(fileReader);
 
-            bufferedReader.readLine();
+            bufferedReader.readLine();      // skipping first line of the file (since it's the title)
             String line = bufferedReader.readLine();
 
             while (line != null) {
@@ -62,6 +62,7 @@ public class Ledger {
                 String time = cols[1];
                 String description = cols[2];
                 String vendor = cols[3];
+//                String amount = cols[4];
                 double amount = Double.parseDouble(cols[4]);
 
                 Transaction transaction = new Transaction(date, time, description, vendor, amount);
@@ -71,69 +72,100 @@ public class Ledger {
             }
             bufferedReader.close();
         } catch (Exception e) {
-            System.out.println("This is an exception e error");
+            System.out.println("\n -------------------This is an exception e error in loadTransaction-------------------\n");
+            throw new RuntimeException(e);
+        }
+    }
+
+    // saving one transaction at a time from the transaction file
+    public static void saveTransactions(String date, String time, String description, String vendor, double amount){
+//    public void saveTransactions(){
+        try{
+            FileWriter fileWriter = new FileWriter("transactions.csv", true);
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+
+            Transaction depositTransactions = new Transaction(date, time, description, vendor, amount);
+//            bufferedWriter.write("date|time|description|vendor|amount");
+            bufferedWriter.newLine();       // starting a new line
+            bufferedWriter.write(depositTransactions.formatForCsv());    // Write the content
+
+            bufferedWriter.close();     // closes the writer and saves changes
+        }
+        catch (Exception e) {
+            System.out.println("Error writing to file. Exiting program...");
             throw new RuntimeException(e);
         }
 
     }
 
     // adding new transaction made to the file
-    private void addTransaction() {
-
-
+    private void addTransaction(String date, String time, String description, String vendor, double amount) {
+        System.out.println("addTransaction Screen");
+        Transaction newTransaction = new Transaction(date, time, description, vendor, amount);
+        transactions.add(newTransaction);
+        saveTransactions(date, time, description, vendor, amount);
     }
 
-    // saving one transaction at a time from the transaction file
-    private void saveTransactions(){
-//        date|time|description|vendor|amount
-//        2023-04-15|10:13:25|ergonomic keyboard|Amazon|-89.50
-//        2023-04-15|11:15:00|Invoice 1001 paid|Joe|1500.00
+    //▪ P) Make Payment (Debit) - prompt user for the debit information and save it to the csv file
+    public static void addDeposit() {
+        System.out.println("D) Add Deposit - prompt user for the deposit information and save it to the csv file");
+        System.out.print("Date (yyyy-MM-dd): ");
+        String dateEntered = scanner.nextLine().toUpperCase().strip();
+        System.out.print("Time (HH:mm): ");
+        String timeEntered = scanner.nextLine().toUpperCase().strip();
+        System.out.print("Description: ");
+        String descriptionEntered = scanner.nextLine();
+        System.out.print("Vendor: ");
+        String vendorEntered = scanner.nextLine();
+        System.out.print("Amount: ");
+        double amountEntered = scanner.nextDouble();
 
-//        try{
-//            FileWriter fileWriter = new FileWriter("transactions.csv", true);
-//            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-//            bufferedWriter.newLine();
-//
-//            String line = bufferedWriter.newLine();
-//
-//            System.out.println("date|time|description|vendor|amount");
-//
-//
-//                bufferedWriter.newLine();
-//
-//        }
-//        catch (Exception e) {
-//            System.out.println("Error writing to file. Exiting program...");
-//            throw new RuntimeException(e);
-//        }
-//        return;
+        Ledger.saveTransactions(dateEntered, timeEntered, descriptionEntered, vendorEntered, amountEntered);
     }
 
-    // displays all transaction made on the account
+    public static void addPayment(){
+        System.out.println("P) Make Payment (Debit) - prompt user for the debit information and save it to the csv file");
+        System.out.print("Date (yyyy-MM-dd): ");
+        String dateEntered = scanner.nextLine().toUpperCase().strip();
+        System.out.print("Time (HH:mm): ");
+        String timeEntered = scanner.nextLine().toUpperCase().strip();
+        System.out.print("Description: ");
+        String descriptionEntered = scanner.nextLine();
+        System.out.print("Vendor: ");
+        String vendorEntered = scanner.nextLine();
+        System.out.print("Amount: ");
+        double amountEntered = scanner.nextDouble();
+
+        Ledger.saveTransactions(dateEntered, timeEntered, descriptionEntered, vendorEntered, amountEntered);
+    }
+
+    // displays all transaction made on the account to user
     private void displayAllTransactions(){
         System.out.println();
-        System.out.println(transaction.formatHeaderForDisplay());
+        UserInterface.printCentered("All Transactions", width);
+        System.out.println("-".repeat(width));
+        System.out.println(UserInterface.formatHeaderForDisplay());
+        System.out.println("-".repeat(width));
         for(Transaction transaction : transactions){
-            System.out.println(transaction.formatForDisplay());
+            System.out.println(transaction.formatForTransactionDisplay());
         }
     }
 
     // displays only the entries that are deposits into the account
     private void displayDeposits() {
-
-
+        System.out.println();
+        UserInterface.printCentered("Deposit History", width);
     }
 
     // displays only the negative entries (or payments)
     private void displayPayments() {
-
-
+        System.out.println();
+        UserInterface.printCentered("Payment History", width);
     }
 
-    public static Ledger createLoadedLedger() {
+    public static Ledger loadLedgerFromFile() {
         Ledger ledger = new Ledger();
         ledger.loadTransaction();
-
         return ledger;
     }
 }

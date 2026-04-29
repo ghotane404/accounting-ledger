@@ -5,18 +5,22 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class Transaction {
+//    private static Transaction transaction;
+//    private static Ledger ledger;
+
     private String currentDate;
     private String currentTime;
-    private String productDescription;
-    private String productVendor;
-    private double productAmount;
+    private String transactionDescription;
+    private String transactionVendor;
+    private double transactionAmount;
+//    private String transactionAmount;
 
-    Transaction(String currentDate, String currentTime, String productDescription, String productVendor, double productAmount){
+    Transaction(String currentDate, String currentTime, String transactionDescription, String transactionVendor, double transactionAmount){
         this.currentDate = currentDate;
         this.currentTime = currentTime;
-        this.productDescription = productDescription;
-        this.productVendor = productVendor;
-        this.productAmount = productAmount;
+        this.transactionDescription = transactionDescription;
+        this.transactionVendor = transactionVendor;
+        this.transactionAmount = transactionAmount;
     }
 
     public String getDate(){
@@ -28,32 +32,25 @@ public class Transaction {
     }
 
     public String getDescription(){
-        return productDescription;
+        return transactionDescription;
     }
 
     public String getVendor(){
-        return productVendor;
+        return transactionVendor;
     }
 
     public double getAmount(){
-        return productAmount;
+        return transactionAmount;
     }
-
 
     // send the transactions from customer to the Ledger file to be saved to cvs file.
     public String formatForCsv(){
-        System.out.println("date|time|description|vendor|amount");
-        return String.format("%s|%s|%s|%s|%.2f", currentDate(), currentTime(), productDescription, productVendor, productAmount);
-
+//        System.out.println("date|time|description|vendor|amount");
+        return String.format("%s|%s|%s|%s|%.2f", currentDate, currentTime, transactionDescription, transactionVendor, transactionAmount);
     }
 
-    public String formatForDisplay() {
-        return String.format("%s | %s | %-35s | %-20s | $%.2f", currentDate, currentTime, productDescription, productVendor, productAmount);
-    }
-
-    public String formatHeaderForDisplay() {
-        String date = "Date", time = "Time", description = "Description", vendor = "Vendor", amount = "Amount";
-        return String.format("%s | %s | %-35s | %-20s | %s", date, time, description, vendor, amount);
+    public String formatForTransactionDisplay() {
+        return String.format("%-10s | %-10s | %-35s | %-20s | $%.2f", currentDate, currentTime, transactionDescription, transactionVendor, transactionAmount);
     }
 
     public static String currentDate(){
@@ -64,20 +61,9 @@ public class Transaction {
 
     public static String currentTime(){
         LocalDateTime today = LocalDateTime.now();
-        DateTimeFormatter formatTime = DateTimeFormatter.ofPattern("HH:mm:ss");      // formatting the date and time
+        DateTimeFormatter formatTime = DateTimeFormatter.ofPattern("HH:mm");      // formatting the date and time
         return today.format(formatTime);        // returns the formatted date and time
     }
-
-    //▪ P) Make Payment (Debit) - prompt user for the debit information and save it to the csv file
-
-//    isDeposit()
-//
-//    isPayment()
-//
-//    toString()
-
-
-
 
 
 }

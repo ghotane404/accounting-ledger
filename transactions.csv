@@ -1,11 +1,11 @@
 date|time|description|vendor|amount
-2026-04-01|09:15:30|Office chairs|Amazon|-245.99
-2026-04-02|11:30:00|Invoice 1001 paid|Acme Corp|1500.00
-2026-04-03|14:05:12|Printer paper|Office Depot|-38.75
-2026-04-05|10:45:22|Website maintenance payment|Bluebird Cafe|350.00
 2026-04-08|16:20:40|Business lunch|Chipotle|-24.63
 2026-04-10|08:10:15|Invoice 1002 paid|Northwest Design|875.50
 2026-04-12|13:55:00|Cloud hosting|AWS|-64.99
+2026-04-03|14:05:12|Printer paper|Office Depot|-38.75
 2026-04-15|17:25:10|Refund received|Amazon|45.00
+2026-04-05|10:45:22|Website maintenance payment|Bluebird Cafe|350.00
 2026-04-18|12:00:00|Software subscription|Adobe|-59.99
+2026-04-01|09:15:30|Office chairs|Amazon|-245.99
 2026-04-20|15:40:35|Invoice 1003 paid|Joe|1200.00
+2026-04-02|11:30:00|Invoice 1001 paid|Acme Corp|1500.00
