@@ -64,6 +64,4 @@ public class Transaction {
         DateTimeFormatter formatTime = DateTimeFormatter.ofPattern("HH:mm");      // formatting the date and time
         return today.format(formatTime);        // returns the formatted date and time
     }
-
-
 }

@@ -4,11 +4,12 @@ import java.util.*;
 public class Main {
     static Scanner scanner = new Scanner(System.in);
     private static Ledger ledger;
+    private Reports reports;
 
     public static void main (String[] args){
         //The home screen should give the user the following options. The
         //application should continue to run until the user chooses to exit.
-        ledger = Ledger.loadLedgerFromFile();
+        ledger = Ledger.createLoadedLedger();
         homeScreen();
     }
 
@@ -23,14 +24,15 @@ public class Main {
             System.out.println("L) Ledger");
             System.out.println("X) Exit");
 
+            System.out.print("Enter your choice: ");
             String userChoice = scanner.nextLine().toUpperCase().strip();
 
             switch(userChoice){
                 case "D":
-                    Ledger.addDeposit();
+                    ledger.addDeposit();
                     break;
                 case "P":
-                    Ledger.addPayment();
+                    ledger.addPayment();
                     break;
                 case "L":
                     ledger.ledgerScreen();

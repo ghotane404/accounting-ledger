@@ -1,13 +1,20 @@
 package com.pluralsight;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.Month;
 import java.util.*;
 
 public class Reports {
     static Scanner scanner = new Scanner(System.in);
     static int width = 100;
-//    private Reports reports = new Reports();
-    private static ArrayList<Transaction> transactions = new ArrayList<>();
-    private static Transaction transaction;
 
+    private ArrayList<Transaction> transactions;
+    private static LocalDate today = LocalDate.now();
+
+    public Reports(ArrayList<Transaction> transactions) {
+        this.transactions = transactions;
+    }
 
     public void reportScreen(){
 //        R) Reports - A new screen that allows the user to run pre-defined reports or to run a custom search
@@ -20,6 +27,7 @@ public class Reports {
         System.out.println("4) Previous Year");
         System.out.println("5) Search by Vendor - prompt the user for the vendor name and display all entries for that vendor ");
         System.out.println("0) Back - go back to the Ledger page");
+        System.out.print("Enter your choice: ");
 
         String userChoice = scanner.nextLine().toUpperCase().strip();
 
@@ -48,74 +56,116 @@ public class Reports {
                 System.out.println("Invalid selection. Please try again.");
                 break;
         }
-
     }
 
     // Current month from the 1st through today
-    private static void monthToDate(){
+    private void monthToDate(){
+        double transactionTotal = 0;
+        int currentMonth = today.getMonthValue();
+
         System.out.println();
         UserInterface.printCentered("Month To Date Transactions", width);
         System.out.println("-".repeat(width));
         System.out.println(UserInterface.formatHeaderForDisplay());
         System.out.println("-".repeat(width));
-        for(Transaction transaction : transactions){
-            System.out.println(transaction.formatForTransactionDisplay());
-        }
 
+        for (Transaction transaction : transactions) {
+            LocalDate transactionDate = LocalDate.parse(transaction.getDate());
+
+            // if transaction month equals current month, print it
+            if (transactionDate.getMonthValue() == currentMonth) {
+                System.out.println(transaction.formatForTransactionDisplay());
+                transactionTotal += transaction.getAmount();
+            }
+
+        }
+        System.out.println(UserInterface.formatTotalForDisplay(transactionTotal));
     }
 
     // Last full month
-    private static void previousMonth(){
+    private void previousMonth(){
+        double transactionTotal = 0;
+        LocalDate previousMonth = today.minusMonths(1);
+
         System.out.println();
         UserInterface.printCentered("Previous Month Transactions", width);
         System.out.println("-".repeat(width));
         System.out.println(UserInterface.formatHeaderForDisplay());
         System.out.println("-".repeat(width));
-        for(Transaction transaction : transactions){
-            System.out.println(transaction.formatForTransactionDisplay());
-        }
 
+        for (Transaction transaction : transactions) {
+            LocalDate transactionDate = LocalDate.parse(transaction.getDate());
+            // if transaction month equals current month, print it
+            if (transactionDate.getMonthValue() == previousMonth.getMonthValue() && transactionDate.getYear() == previousMonth.getYear()) {
+                System.out.println(transaction.formatForTransactionDisplay());
+                transactionTotal += transaction.getAmount();
+            }
+        }
+        System.out.println(UserInterface.formatTotalForDisplay(transactionTotal));
     }
 
     // Current year, from Jan 1 through today
-    private static void yearToDate(){
+    private void yearToDate(){
+        double transactionTotal = 0;
+        int currentYear = LocalDate.now().getYear();
+
         System.out.println();
         UserInterface.printCentered("Year To Date Transactions", width);
         System.out.println("-".repeat(width));
         System.out.println(UserInterface.formatHeaderForDisplay());
         System.out.println("-".repeat(width));
-        for(Transaction transaction : transactions){
-            System.out.println(transaction.formatForTransactionDisplay());
-        }
 
+        for (Transaction transaction : transactions) {
+            LocalDate transactionDate = LocalDate.parse(transaction.getDate());
+            // if transaction month equals current month, print it
+            if (transactionDate.getYear() == currentYear) {
+                System.out.println(transaction.formatForTransactionDisplay());
+                transactionTotal += transaction.getAmount();
+            }
+        }
+        System.out.println(UserInterface.formatTotalForDisplay(transactionTotal));
     }
 
     // Last full year
-    private static void previousYear(){
+    private void previousYear(){
+        double transactionTotal = 0;
+        LocalDate previousYear = today.minusYears(1);
+
         System.out.println();
         UserInterface.printCentered("Previous Year Transactions", width);
         System.out.println("-".repeat(width));
         System.out.println(UserInterface.formatHeaderForDisplay());
         System.out.println("-".repeat(width));
-        for(Transaction transaction : transactions){
-            System.out.println(transaction.formatForTransactionDisplay());
-        }
 
+        for (Transaction transaction : transactions) {
+            LocalDate transactionDate = LocalDate.parse(transaction.getDate());
+            // if transaction month equals current month, print it
+            if (transactionDate.getYear() == previousYear.getYear()) {
+                System.out.println(transaction.formatForTransactionDisplay());
+                transactionTotal += transaction.getAmount();
+            }
+        }
+        System.out.println(UserInterface.formatTotalForDisplay(transactionTotal));
     }
 
     // Transactions matching a vendor name
-    private static void searchByVendor(){
+    private void searchByVendor(){
+        double transactionTotal = 0;
         System.out.println();
-        System.out.println("5) Search by Vendor - prompt the user for the vendor name and display all entries for that vendor ");
+        System.out.print("Enter vendor name: ");
+        String vendorName = scanner.nextLine().toUpperCase().strip();
+
         UserInterface.printCentered("Transactions By Vendor", width);
         System.out.println("-".repeat(width));
         System.out.println(UserInterface.formatHeaderForDisplay());
         System.out.println("-".repeat(width));
 
-        for(Transaction transaction : transactions){
-            System.out.println(transaction.formatForTransactionDisplay());
+        for (Transaction transaction : transactions) {
+            if (Objects.equals(transaction.getVendor().toUpperCase().strip(), vendorName)) {
+                System.out.println(transaction.formatForTransactionDisplay());
+                transactionTotal += transaction.getAmount();
+            }
         }
-
-
+        System.out.println(UserInterface.formatTotalForDisplay(transactionTotal));
     }
 }

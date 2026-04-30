@@ -6,8 +6,12 @@ public class Ledger {
     static Scanner scanner = new Scanner(System.in);
     static int width = 100;
 
-    private static Reports reports = new Reports();
+    private Reports reports;
     private static ArrayList<Transaction> transactions  = new ArrayList<>();
+
+    public Ledger() {
+        reports = new Reports(transactions);
+    }
 
     //▪ L) Ledger - display the ledger screen
     public void ledgerScreen(){
@@ -22,6 +26,7 @@ public class Ledger {
             System.out.println("R) Reports - A new screen that allows the user to run pre-defined reports or to run a custom search ");
             System.out.println("H) Home - go back to the home page");
 
+            System.out.print("Enter your choice: ");
             String userChoice = scanner.nextLine().toUpperCase().strip();
 
             switch (userChoice) {
@@ -62,7 +67,6 @@ public class Ledger {
                 String time = cols[1];
                 String description = cols[2];
                 String vendor = cols[3];
-//                String amount = cols[4];
                 double amount = Double.parseDouble(cols[4]);
 
                 Transaction transaction = new Transaction(date, time, description, vendor, amount);
@@ -72,7 +76,7 @@ public class Ledger {
             }
             bufferedReader.close();
         } catch (Exception e) {
-            System.out.println("\n -------------------This is an exception e error in loadTransaction-------------------\n");
+            System.out.println("\n Error");
             throw new RuntimeException(e);
         }
     }
@@ -107,11 +111,11 @@ public class Ledger {
     }
 
     //▪ P) Make Payment (Debit) - prompt user for the debit information and save it to the csv file
-    public static void addDeposit() {
+    public void addDeposit() {
         System.out.println("D) Add Deposit - prompt user for the deposit information and save it to the csv file");
         System.out.print("Date (yyyy-MM-dd): ");
         String dateEntered = scanner.nextLine().toUpperCase().strip();
-        System.out.print("Time (HH:mm): ");
+        System.out.print("Time (HH:mm:ss): ");
         String timeEntered = scanner.nextLine().toUpperCase().strip();
         System.out.print("Description: ");
         String descriptionEntered = scanner.nextLine();
@@ -123,11 +127,11 @@ public class Ledger {
         Ledger.saveTransactions(dateEntered, timeEntered, descriptionEntered, vendorEntered, amountEntered);
     }
 
-    public static void addPayment(){
+    public void addPayment(){
         System.out.println("P) Make Payment (Debit) - prompt user for the debit information and save it to the csv file");
         System.out.print("Date (yyyy-MM-dd): ");
         String dateEntered = scanner.nextLine().toUpperCase().strip();
-        System.out.print("Time (HH:mm): ");
+        System.out.print("Time (HH:mm:ss): ");
         String timeEntered = scanner.nextLine().toUpperCase().strip();
         System.out.print("Description: ");
         String descriptionEntered = scanner.nextLine();
@@ -140,15 +144,21 @@ public class Ledger {
     }
 
     // displays all transaction made on the account to user
-    private void displayAllTransactions(){
+    public void displayAllTransactions(){
+        double transactionTotal = 0;
+
         System.out.println();
         UserInterface.printCentered("All Transactions", width);
         System.out.println("-".repeat(width));
         System.out.println(UserInterface.formatHeaderForDisplay());
         System.out.println("-".repeat(width));
+
         for(Transaction transaction : transactions){
             System.out.println(transaction.formatForTransactionDisplay());
+            transactionTotal += transaction.getAmount();
         }
+
+        System.out.println(UserInterface.formatTotalForDisplay(transactionTotal));
     }
 
     // displays only the entries that are deposits into the account
@@ -163,7 +173,8 @@ public class Ledger {
         UserInterface.printCentered("Payment History", width);
     }
 
-    public static Ledger loadLedgerFromFile() {
+    // creates a Class with transaction already loaded.
+    public static Ledger createLoadedLedger() {
         Ledger ledger = new Ledger();
         ledger.loadTransaction();
         return ledger;
