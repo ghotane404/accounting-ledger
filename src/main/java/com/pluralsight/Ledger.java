@@ -7,15 +7,16 @@ public class Ledger {
     static int width = 100;
 
     private Reports reports;
-    private static ArrayList<Transaction> transactions  = new ArrayList<>();
+    private ArrayList<Transaction> transactions;
 
-    public Ledger() {
-        reports = new Reports(transactions);
+    public Ledger(ArrayList<Transaction> transactions) {
+        this.transactions = transactions;
+        this.reports = new Reports(transactions);
     }
 
     //▪ L) Ledger - display the ledger screen
     public void ledgerScreen(){
-        //    Ledger - All entries should show the newest entries first
+        //    Ledger - All entries should show the newest entries first???
         while (true){
             System.out.println();
             UserInterface.printCentered("Ledger Page", 40);
@@ -25,7 +26,6 @@ public class Ledger {
             System.out.println("P) Payments - Display only the negative entries (or payments)");
             System.out.println("R) Reports - A new screen that allows the user to run pre-defined reports or to run a custom search ");
             System.out.println("H) Home - go back to the home page");
-
             System.out.print("Enter your choice: ");
             String userChoice = scanner.nextLine().toUpperCase().strip();
 
@@ -52,131 +52,78 @@ public class Ledger {
         }
     }
 
-    // loading the transaction.csv file
-    private void loadTransaction(){
-        try {
-            FileReader fileReader = new FileReader("transactions.csv");
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
-
-            bufferedReader.readLine();      // skipping first line of the file (since it's the title)
-            String line = bufferedReader.readLine();
-
-            while (line != null) {
-                String[] cols = line.split("\\|");
-                String date = cols[0];
-                String time = cols[1];
-                String description = cols[2];
-                String vendor = cols[3];
-                double amount = Double.parseDouble(cols[4]);
-
-                Transaction transaction = new Transaction(date, time, description, vendor, amount);
-                transactions.add(transaction);
-
-                line = bufferedReader.readLine();
-            }
-            bufferedReader.close();
-        } catch (Exception e) {
-            System.out.println("\n Error");
-            throw new RuntimeException(e);
-        }
-    }
-
-    // saving one transaction at a time from the transaction file
-    public static void saveTransactions(String date, String time, String description, String vendor, double amount){
-//    public void saveTransactions(){
-        try{
-            FileWriter fileWriter = new FileWriter("transactions.csv", true);
-            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-
-            Transaction depositTransactions = new Transaction(date, time, description, vendor, amount);
-//            bufferedWriter.write("date|time|description|vendor|amount");
-            bufferedWriter.newLine();       // starting a new line
-            bufferedWriter.write(depositTransactions.formatForCsv());    // Write the content
-
-            bufferedWriter.close();     // closes the writer and saves changes
-        }
-        catch (Exception e) {
-            System.out.println("Error writing to file. Exiting program...");
-            throw new RuntimeException(e);
-        }
-
-    }
-
     // adding new transaction made to the file
     private void addTransaction(String date, String time, String description, String vendor, double amount) {
-        System.out.println("addTransaction Screen");
         Transaction newTransaction = new Transaction(date, time, description, vendor, amount);
         transactions.add(newTransaction);
-        saveTransactions(date, time, description, vendor, amount);
+
+        TransactionFileManager.saveTransactions(newTransaction);
+        System.out.println("Transaction saved successfully: ");
+        System.out.printf("$%.2f from %s on %s.%n", amount, vendor, date);
+        UserInterface.pressEnterToContinue();
     }
 
     //▪ P) Make Payment (Debit) - prompt user for the debit information and save it to the csv file
     public void addDeposit() {
-        System.out.println("D) Add Deposit - prompt user for the deposit information and save it to the csv file");
-        System.out.print("Date (yyyy-MM-dd): ");
-        String dateEntered = scanner.nextLine().toUpperCase().strip();
-        System.out.print("Time (HH:mm:ss): ");
-        String timeEntered = scanner.nextLine().toUpperCase().strip();
-        System.out.print("Description: ");
-        String descriptionEntered = scanner.nextLine();
-        System.out.print("Vendor: ");
-        String vendorEntered = scanner.nextLine();
-        System.out.print("Amount: ");
-        double amountEntered = scanner.nextDouble();
+        System.out.println("Please enter the deposit information:");
+        Transaction transaction = UserInterface.promptTransactionInfo();
 
-        Ledger.saveTransactions(dateEntered, timeEntered, descriptionEntered, vendorEntered, amountEntered);
+        addTransaction(transaction.getDate(), transaction.getTime(), transaction.getDescription(), transaction.getVendor(), Math.abs(transaction.getAmount()));
     }
 
     public void addPayment(){
-        System.out.println("P) Make Payment (Debit) - prompt user for the debit information and save it to the csv file");
-        System.out.print("Date (yyyy-MM-dd): ");
-        String dateEntered = scanner.nextLine().toUpperCase().strip();
-        System.out.print("Time (HH:mm:ss): ");
-        String timeEntered = scanner.nextLine().toUpperCase().strip();
-        System.out.print("Description: ");
-        String descriptionEntered = scanner.nextLine();
-        System.out.print("Vendor: ");
-        String vendorEntered = scanner.nextLine();
-        System.out.print("Amount: ");
-        double amountEntered = scanner.nextDouble();
+        System.out.println("Please enter the payment information:");
+        Transaction transaction = UserInterface.promptTransactionInfo();
 
-        Ledger.saveTransactions(dateEntered, timeEntered, descriptionEntered, vendorEntered, amountEntered);
+        addTransaction(transaction.getDate(), transaction.getTime(), transaction.getDescription(), transaction.getVendor(), -Math.abs(transaction.getAmount()));
+    }
+
+    // displays only the entries that are deposits into the account
+    private void displayDeposits() {
+        displayFilteredTransactions("Deposit History", true);
+    }
+
+    // displays only the negative entries (or payments)
+    private void displayPayments() {
+        displayFilteredTransactions("Payment History", false);
     }
 
     // displays all transaction made on the account to user
-    public void displayAllTransactions(){
+    public void displayAllTransactions() {
         double transactionTotal = 0;
+        UserInterface.printTransactionTableHeader("All Transactions", width);
 
-        System.out.println();
-        UserInterface.printCentered("All Transactions", width);
-        System.out.println("-".repeat(width));
-        System.out.println(UserInterface.formatHeaderForDisplay());
-        System.out.println("-".repeat(width));
-
-        for(Transaction transaction : transactions){
+        for (Transaction transaction : transactions) {
             System.out.println(transaction.formatForTransactionDisplay());
             transactionTotal += transaction.getAmount();
         }
 
         System.out.println(UserInterface.formatTotalForDisplay(transactionTotal));
+        UserInterface.pressEnterToContinue();
     }
 
-    // displays only the entries that are deposits into the account
-    private void displayDeposits() {
-        System.out.println();
-        UserInterface.printCentered("Deposit History", width);
-    }
+    private void displayFilteredTransactions(String title, boolean showDeposits) {
+        double transactionTotal = 0;
+        UserInterface.printTransactionTableHeader(title, width);
 
-    // displays only the negative entries (or payments)
-    private void displayPayments() {
-        System.out.println();
-        UserInterface.printCentered("Payment History", width);
+        for (Transaction transaction : transactions) {
+            if (showDeposits && transaction.getAmount() > 0) {
+                System.out.println(transaction.formatForTransactionDisplay());
+                transactionTotal += transaction.getAmount();
+
+            }
+            else if (!showDeposits && transaction.getAmount() < 0) {
+                System.out.println(transaction.formatForTransactionDisplay());
+                transactionTotal += transaction.getAmount();
+            }
+        }
+        System.out.println(UserInterface.formatTotalForDisplay(transactionTotal));
+        UserInterface.pressEnterToContinue();
     }
 
     // creates a Class with transaction already loaded.
     public static Ledger createLoadedLedger() {
-        Ledger ledger = new Ledger();
-        ledger.loadTransaction();
-        return ledger;
+        ArrayList<Transaction> loadedTransactions = TransactionFileManager.loadTransactions();
+        return new Ledger(loadedTransactions);      // Create a Ledger object using the loaded transactions.
     }
 }

@@ -1,16 +1,12 @@
 package com.pluralsight;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.Month;
 import java.util.*;
 
 public class Reports {
     static Scanner scanner = new Scanner(System.in);
-    static int width = 100;
-
     private ArrayList<Transaction> transactions;
     private static LocalDate today = LocalDate.now();
+    static int width = 100;
 
     public Reports(ArrayList<Transaction> transactions) {
         this.transactions = transactions;
@@ -80,6 +76,7 @@ public class Reports {
 
         }
         System.out.println(UserInterface.formatTotalForDisplay(transactionTotal));
+        UserInterface.pressEnterToContinue();
     }
 
     // Last full month
@@ -102,6 +99,7 @@ public class Reports {
             }
         }
         System.out.println(UserInterface.formatTotalForDisplay(transactionTotal));
+        UserInterface.pressEnterToContinue();
     }
 
     // Current year, from Jan 1 through today
@@ -124,6 +122,7 @@ public class Reports {
             }
         }
         System.out.println(UserInterface.formatTotalForDisplay(transactionTotal));
+        UserInterface.pressEnterToContinue();
     }
 
     // Last full year
@@ -146,6 +145,7 @@ public class Reports {
             }
         }
         System.out.println(UserInterface.formatTotalForDisplay(transactionTotal));
+        UserInterface.pressEnterToContinue();
     }
 
     // Transactions matching a vendor name
@@ -167,5 +167,6 @@ public class Reports {
             }
         }
         System.out.println(UserInterface.formatTotalForDisplay(transactionTotal));
+        UserInterface.pressEnterToContinue();
     }
 }
