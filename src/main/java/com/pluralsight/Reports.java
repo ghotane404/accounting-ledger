@@ -59,11 +59,7 @@ public class Reports {
         double transactionTotal = 0;
         int currentMonth = today.getMonthValue();
 
-        System.out.println();
-        UserInterface.printCentered("Month To Date Transactions", width);
-        System.out.println("-".repeat(width));
-        System.out.println(UserInterface.formatHeaderForDisplay());
-        System.out.println("-".repeat(width));
+        UserInterface.printTransactionTableHeader("Month To Date Transactions", width);
 
         for (Transaction transaction : transactions) {
             LocalDate transactionDate = LocalDate.parse(transaction.getDate());
@@ -84,11 +80,7 @@ public class Reports {
         double transactionTotal = 0;
         LocalDate previousMonth = today.minusMonths(1);
 
-        System.out.println();
-        UserInterface.printCentered("Previous Month Transactions", width);
-        System.out.println("-".repeat(width));
-        System.out.println(UserInterface.formatHeaderForDisplay());
-        System.out.println("-".repeat(width));
+        UserInterface.printTransactionTableHeader("Previous Month Transactions", width);
 
         for (Transaction transaction : transactions) {
             LocalDate transactionDate = LocalDate.parse(transaction.getDate());
@@ -107,11 +99,7 @@ public class Reports {
         double transactionTotal = 0;
         int currentYear = LocalDate.now().getYear();
 
-        System.out.println();
-        UserInterface.printCentered("Year To Date Transactions", width);
-        System.out.println("-".repeat(width));
-        System.out.println(UserInterface.formatHeaderForDisplay());
-        System.out.println("-".repeat(width));
+        UserInterface.printTransactionTableHeader("Year To Date Transactions", width);
 
         for (Transaction transaction : transactions) {
             LocalDate transactionDate = LocalDate.parse(transaction.getDate());
@@ -130,11 +118,7 @@ public class Reports {
         double transactionTotal = 0;
         LocalDate previousYear = today.minusYears(1);
 
-        System.out.println();
-        UserInterface.printCentered("Previous Year Transactions", width);
-        System.out.println("-".repeat(width));
-        System.out.println(UserInterface.formatHeaderForDisplay());
-        System.out.println("-".repeat(width));
+        UserInterface.printTransactionTableHeader("Previous Year Transactions", width);
 
         for (Transaction transaction : transactions) {
             LocalDate transactionDate = LocalDate.parse(transaction.getDate());
@@ -155,10 +139,7 @@ public class Reports {
         System.out.print("Enter vendor name: ");
         String vendorName = scanner.nextLine().toUpperCase().strip();
 
-        UserInterface.printCentered("Transactions By Vendor", width);
-        System.out.println("-".repeat(width));
-        System.out.println(UserInterface.formatHeaderForDisplay());
-        System.out.println("-".repeat(width));
+        UserInterface.printTransactionTableHeader("Transactions By Vendor", width);
 
         for (Transaction transaction : transactions) {
             if (Objects.equals(transaction.getVendor().toUpperCase().strip(), vendorName)) {
