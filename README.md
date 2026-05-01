@@ -175,7 +175,7 @@ public static Transaction promptTransactionInfo(){
 }
 ```
 
-This method is useful because it validates the amount input before creating a `Transaction` object. Without that validation, the program could crash if the user typed text instead of a number, because apparently users enjoy turning calculators into crime scenes.
+This method is useful because it validates the amount input before creating a `Transaction` object. Without that validation, the program could crash if the user typed text instead of a number.
 
 <br>
 
