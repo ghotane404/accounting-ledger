@@ -4,8 +4,7 @@ import java.util.*;
 public class UserInterface {
     static Scanner scanner = new Scanner(System.in);
 
-    // homeScreen in UI so main is only used to run the program
-    public static void homeScreen(Ledger ledger){
+    public static void homeScreen(Ledger ledger){       // homeScreen in UI so main is only used to run the program
         int width = 40;
         while (true){
             System.out.println();
@@ -42,6 +41,8 @@ public class UserInterface {
     }
 
     public static Transaction promptTransactionInfo(){
+        double amountEntered;
+
         System.out.print("Date (yyyy-MM-dd): ");
         String dateEntered = scanner.nextLine().strip();
 
@@ -54,8 +55,16 @@ public class UserInterface {
         System.out.print("Vendor: ");
         String vendorEntered = scanner.nextLine().strip();
 
-        System.out.print("Amount: ");
-        double amountEntered = Double.parseDouble(scanner.nextLine().strip());
+        while (true) {
+            System.out.print("Amount: ");
+            try {
+                amountEntered = Double.parseDouble(scanner.nextLine().strip());
+                break;
+            }
+            catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number (e.g 12.34).");
+            }
+        }
 
         return new Transaction(dateEntered, timeEntered, descriptionEntered, vendorEntered, amountEntered);
 
@@ -75,6 +84,7 @@ public class UserInterface {
 
     public static void printTransactionTableHeader(String title, int width) {
         System.out.println();
+
         printCentered(title, width);
         System.out.println("-".repeat(width));
         System.out.println(formatHeaderForDisplay());

@@ -6,12 +6,12 @@ public class Ledger {
     static Scanner scanner = new Scanner(System.in);
     static int width = 100;
 
-    private Reports reports;
+    private Reports reports;        //
     private ArrayList<Transaction> transactions;
 
-    public Ledger(ArrayList<Transaction> transactions) {
-        this.transactions = transactions;
-        this.reports = new Reports(transactions);
+    public Ledger(ArrayList<Transaction> transactions) {        // a constructor which receives the loaded transaction list
+        this.transactions = transactions;       // saves transaction list it receives into this Ledger object
+        this.reports = new Reports(transactions);       // creates Reports object with the same transaction list
     }
 
     //▪ L) Ledger - display the ledger screen
@@ -43,11 +43,11 @@ public class Ledger {
                     reports.reportScreen();
                     break;
                 case "H":
-                    return;     // immediately leaves the method
+                    return;     // immediately leaves the current method
                 default:
                     System.out.println();
                     System.out.println("Invalid selection. Please try again.");
-                    return;
+                    break;
             }
         }
     }
@@ -60,7 +60,7 @@ public class Ledger {
         TransactionFileManager.saveTransactions(newTransaction);
         System.out.println("Transaction saved successfully: ");
         System.out.printf("$%.2f from %s on %s.%n", amount, vendor, date);
-        UserInterface.pressEnterToContinue();
+        UserInterface.pressEnterToContinue();       // Pauses the screen so the user can read the result.
     }
 
     //▪ P) Make Payment (Debit) - prompt user for the debit information and save it to the csv file
@@ -71,6 +71,7 @@ public class Ledger {
         addTransaction(transaction.getDate(), transaction.getTime(), transaction.getDescription(), transaction.getVendor(), Math.abs(transaction.getAmount()));
     }
 
+    // goes to displayFilteredTransactions method where both deposit and payment transaction are handled.
     public void addPayment(){
         System.out.println("Please enter the payment information:");
         Transaction transaction = UserInterface.promptTransactionInfo();
@@ -123,7 +124,41 @@ public class Ledger {
 
     // creates a Class with transaction already loaded.
     public static Ledger createLoadedLedger() {
-        ArrayList<Transaction> loadedTransactions = TransactionFileManager.loadTransactions();
-        return new Ledger(loadedTransactions);      // Create a Ledger object using the loaded transactions.
+        ArrayList<Transaction> loadedTransactions = TransactionFileManager.loadTransactions();      // loads transactions from the CSV file.
+        return new Ledger(loadedTransactions);      // create a Ledger object using the loaded transactions.
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

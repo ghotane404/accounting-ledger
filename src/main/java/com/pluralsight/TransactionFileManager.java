@@ -12,7 +12,7 @@ public class TransactionFileManager {
             BufferedReader bufferedReader = new BufferedReader(fileReader);
 
             bufferedReader.readLine();      // skipping first line of the file (since it's the title)
-            String line = bufferedReader.readLine();
+            String line = bufferedReader.readLine();        
 
             while (line != null) {
                 String[] cols = line.split("\\|");
@@ -28,9 +28,9 @@ public class TransactionFileManager {
                 line = bufferedReader.readLine();
             }
             bufferedReader.close();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             System.out.println("\nError loading transactions.");
-            throw new RuntimeException(e);
         }
         // return the completed transaction list back to Ledger.
         return loadedTransactions;
@@ -39,18 +39,16 @@ public class TransactionFileManager {
     // saving one transaction at a time from the transaction file
     public static void saveTransactions(Transaction transaction){
         try{
-            FileWriter fileWriter = new FileWriter("transactions.csv", true);
+            FileWriter fileWriter = new FileWriter("transactions.csv", true);       // saves transaction to the .csv file
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
 
-//            Transaction depositTransactions = new Transaction(date, time, description, vendor, amount);
-            bufferedWriter.newLine();       // starting a new line
-            bufferedWriter.write(transaction.formatForCsv());
+            bufferedWriter.newLine();       // starting a new line before writing to the files
+            bufferedWriter.write(transaction.formatForCsv());       // adds the transaction in the format required in the csv file
 
             bufferedWriter.close();     // closes the writer and saves changes
         }
         catch (Exception e) {
             System.out.println("Error writing to file. Exiting program...");
-            throw new RuntimeException(e);
         }
     }
 }

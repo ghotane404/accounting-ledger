@@ -41,7 +41,7 @@ public class Transaction {
 
     // send the transactions from customer to the Ledger file to be saved to cvs file.
     public String formatForCsv(){
-//        System.out.println("date|time|description|vendor|amount");
+//        System.out.println("date|time|description|vendor|amount");       // formats transaction as one pipe-delimited CSV row.
         return String.format("%s|%s|%s|%s|%.2f", currentDate, currentTime, transactionDescription, transactionVendor, transactionAmount);
     }
 
